@@ -2,8 +2,11 @@
 .env
 _backups/
 _eklentiler/
-logs/
+logs/*
 scripts/tmp/
+!logs/.gitkeep
+/public/uploads/*
+/tmp/*
 
 # geçici/test dosyaları
 public/info.php

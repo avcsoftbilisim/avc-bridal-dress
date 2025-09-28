@@ -1,0 +1,57 @@
+/* --- Sidebar genişlikleri --- */
+:root{
+  --gp-sidebar-width: 16rem;     /* normal */
+  --gp-sidebar-narrow: 4rem;     /* dar */
+}
+
+/* Sidebar sabitken içerik sola gömülmesin */
+.sidebar.sidebar-fixed ~ .wrapper{
+  margin-left: var(--gp-sidebar-width);
+}
+
+/* Daraltılmış iki varyantın tamamı */
+.sidebar.sidebar-fixed.sidebar-narrow ~ .wrapper,
+.sidebar.sidebar-fixed.sidebar-narrow-unfoldable ~ .wrapper{
+  margin-left: var(--gp-sidebar-narrow);
+}
+
+/* Mobilde overlay; margin sıfır */
+@media (max-width: 991.98px){
+  .sidebar.sidebar-fixed ~ .wrapper{ margin-left: 0; }
+}
+
+/* Header & breadcrumb cila */
+.header .header-toggler{ font-size:1.25rem; }
+.breadcrumb{ margin-bottom: 1rem; }
+.breadcrumb a{ text-decoration: none; }   /* demodaki gibi alt çizgi yok */
+
+/* Aktif menü linki */
+.sidebar .nav-link.active{ background: rgba(0,0,0,.08); }
+
+/* Alt daralt düğmesi görünür olsun (daha önce gizlediysen) */
+.sidebar .sidebar-footer{ display:block !important; }
+
+/* Alt menülerin biraz küçük ve içe girintili görünmesi */
+.sidebar .nav-group-items{
+  margin-left: .25rem;
+  padding-left: .5rem;
+  border-left: 1px dashed rgba(255,255,255,.15);
+}
+.sidebar .nav-group-items .nav-link{
+  font-size: .875rem;                 /* daha küçük yazı */
+  padding: .35rem .75rem .35rem 1.25rem; /* içe girinti */
+  color: rgba(255,255,255,.80);
+}
+.sidebar .nav-group-items .nav-link .nav-icon{
+  font-size: .95rem;
+  margin-right: .35rem;
+  opacity: .85;
+}
+.sidebar .nav-group-items .nav-link:hover{
+  background: rgba(255,255,255,.04);
+  color:#fff;
+}
+.sidebar .nav-group-items .nav-link.active{
+  background: rgba(98,173,255,.15);
+  color:#fff;
+}

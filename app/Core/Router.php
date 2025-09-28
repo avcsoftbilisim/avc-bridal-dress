@@ -4,16 +4,35 @@ namespace App\Core;
 class Router {
     protected array $routes = [];
 
-    public function get(string $path, $handler) { $this->add('GET', $path, $handler); }
+    public function get(string $path, $handler)  { $this->add('GET',  $path, $handler); }
     public function post(string $path, $handler) { $this->add('POST', $path, $handler); }
 
     protected function add(string $method, string $path, $handler) {
-        $pattern = '#^' . preg_replace('#\{([a-zA-Z_][a-zA-Z0-9_-]*)\}#', '(?P<$1>[^/]+)', $path) . '$#';
+        // trailing slash normalizasyonu
+        $path = rtrim($path, '/');
+        if ($path === '') $path = '/';
+
+        // Eğer ham regex verdiysek (# ile başlıyorsa) dokunmadan kullan
+        if ($path[0] === '#') {
+            $pattern = $path;
+        } else {
+            // {id} gibi parametreleri yakala
+            $pattern = '#^' . preg_replace(
+                '#\{([a-zA-Z_][a-zA-Z0-9_-]*)\}#',
+                '(?P<$1>[^/]+)',
+                $path
+            ) . '$#';
+        }
+
         $this->routes[] = compact('method','pattern','handler');
     }
 
     public function dispatch(string $method, string $uri) {
-        $path = parse_url($uri, PHP_URL_PATH);
+        // URL path normalizasyonu
+        $path = parse_url($uri, PHP_URL_PATH) ?? '/';
+        $path = rtrim($path, '/');
+        if ($path === '') $path = '/';
+
         foreach ($this->routes as $r) {
             if ($r['method'] !== $method) continue;
             if (preg_match($r['pattern'], $path, $matches)) {
@@ -25,14 +44,22 @@ class Router {
         echo '404 Not Found';
     }
 
-    protected function invoke($handler, array $params) {
-        if (is_callable($handler)) return call_user_func_array($handler, $params);
-        if (is_string($handler) && str_contains($handler, '@')) {
-            [$class, $method] = explode('@', $handler, 2);
-            $class = 'App\\Controllers\\' . $class;
-            $c = new $class;
-            return call_user_func_array([$c, $method], $params);
+    protected function invoke($handler, array $params = []) {
+        if (is_array($handler) && count($handler) === 2) {
+            [$class, $method] = $handler;
+            if (is_string($class) && class_exists($class)) {
+                $obj = new $class();
+                if (method_exists($obj, $method)) {
+                    // parametreleri sıralı diziye çevir
+                    return call_user_func_array([$obj, $method], array_values($params));
+                }
+                throw new \RuntimeException("Method not found: {$class}::{$method}");
+            }
+            throw new \RuntimeException("Class not found: ".print_r($class,true));
         }
-        throw new \RuntimeException('Invalid route handler');
+        if (is_callable($handler)) {
+            return call_user_func_array($handler, array_values($params));
+        }
+        throw new \RuntimeException('Invalid route handler: '.var_export($handler,true));
     }
 }
