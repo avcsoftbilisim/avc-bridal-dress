@@ -1,0 +1,17 @@
+# gizli/kişisel
+.env
+_backups/
+_eklentiler/
+logs/
+scripts/tmp/
+
+# geçici/test dosyaları
+public/info.php
+public/test_pdo.php
+
+# sistem/IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log

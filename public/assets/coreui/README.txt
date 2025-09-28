@@ -1,0 +1,1 @@
+Using CDN. If you prefer local assets, place CoreUI dist here and change links in layout.
