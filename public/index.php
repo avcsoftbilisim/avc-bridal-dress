@@ -5,16 +5,7 @@ session_start();
 
 $isDebug = (getenv('APP_DEBUG') === 'true');   // .env: APP_DEBUG=true/false
 
-if ($isDebug) {
-  ini_set('display_errors', '1');
-  error_reporting(E_ALL);
-} else {
-  ini_set('display_errors', '0');
-  ini_set('log_errors', '1');
-  ini_set('error_log', __DIR__ . '/../logs/php-error.log');
-  // deprecation/notice/uyarıları arayüzden gizle
-  error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
-}
+
 
 require __DIR__ . '/../app/Core/Autoloader.php';
 
@@ -22,9 +13,11 @@ use App\Core\Router;
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
 use App\Controllers\CustomersController;
+use App\Controllers\ProductsController;
+use App\Controllers\RentalsController;
 
-//error_reporting(E_ALL);
-//ini_set('display_errors','1');
+error_reporting(E_ALL);
+ini_set('display_errors','1');
 
 $config = require __DIR__ . '/../config/config.php';
 
@@ -47,6 +40,28 @@ $router->post('/password/forgot',   [\App\Controllers\AuthController::class, 'fo
 
 $router->get('/password/reset',     [\App\Controllers\AuthController::class, 'reset']);     // ?token=...
 $router->post('/password/reset',    [\App\Controllers\AuthController::class, 'resetPost']);
+
+
+// Ürünler
+$router->get('/products',                [ProductsController::class, 'index']);
+$router->post('/products',               [ProductsController::class, 'store']);   // modal kaydet
+
+// Gelecek ürünler listesi + kayıt
+$router->get('/products/incoming',        [ProductsController::class, 'incoming']);
+$router->post('/products/incoming',       [ProductsController::class, 'incomingStore']);
+
+// Silinen ürünler
+$router->get('/products/deleted',                [ProductsController::class, 'deleted']);
+$router->post('#^/products/deleted/(\d+)/restore$#', [ProductsController::class, 'restore']);
+$router->post('#^/products/deleted/(\d+)/purge$#',   [ProductsController::class, 'purge']);
+
+// Kiralamalar
+$router->get('/rentals',            [RentalsController::class, 'current']); // Kiradaki Ürünler
+$router->get('/rentals/past',       [RentalsController::class, 'past']);    // Geçmiş Kiralar
+$router->get('/rentals/future',     [RentalsController::class, 'future']);  // Gelecek Kiralar
+
+// Teslim alma (return)
+$router->post('#^/rentals/(\d+)/return$#', [RentalsController::class, 'markReturned']);
 
 // Cari Yönetimi
 $router->get('/customers',          [\App\Controllers\CustomersController::class, 'index']);

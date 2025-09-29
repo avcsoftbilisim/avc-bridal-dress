@@ -48,6 +48,44 @@
     $isCari     = ($active === 'cari');
     ?>
 
+    <li class="nav-group">
+    <a class="nav-link nav-group-toggle" href="#">
+      <i class="nav-icon cil-list-rich"></i> Ürün Yönetimi
+    </a>
+    <ul class="nav-group-items">
+      <li class="nav-item">
+        <a class="nav-link<?= ($active??'')==='products' && ($sub??'')==='all' ? ' active' : '' ?>" href="/products">
+          <i class="nav-icon cil-list"></i> Tüm Ürünler
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link<?= ($active??'')==='products' && ($sub??'')==='incoming' ? ' active' : '' ?>" href="/products/incoming">
+          <i class="nav-icon cil-calendar"></i> Gelecek Ürünler
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link<?= ($active??'')==='products' && ($sub??'')==='deleted' ? ' active' : '' ?>" href="/products/deleted">
+          <i class="nav-icon cil-trash"></i> Silinen Ürünler
+        </a>        
+      </li>
+      <li class="nav-item">
+        <a class="nav-link<?= ($active??'')==='products' && ($sub??'')==='rentals' ? ' active' : '' ?>" href="/products/rentals">
+          <i class="nav-icon cil-library"></i> Kiradaki Ürünler
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link<?= ($active??'')==='products' && ($sub??'')==='tailor' ? ' active' : '' ?>" href="/products/tailor">
+          <i class="nav-icon cil-scissors"></i> Terzideki Ürünler
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link<?= ($active??'')==='products' && ($sub??'')==='dryclean' ? ' active' : '' ?>" href="/products/dryclean">
+          <i class="nav-icon cil-drop"></i> Kuru Temizlemedeki Ürünler
+        </a>
+      </li>
+    </ul>
+  </li>
+
     <li class="nav-group"> <!-- show: ilk açılışta açık gelsin -->
         <a class="nav-link nav-group-toggle" href="#">
             <i class="nav-icon cil-address-book"></i>
