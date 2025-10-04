@@ -70,3 +70,41 @@ CREATE TABLE IF NOT EXISTS payments (
 INSERT INTO users (name,email,password_hash,role) VALUES
 ('Yönetici','admin@example.com', CONCAT('$2y$10$', SUBSTRING(SHA2(RAND(),256),1,22), 'ZZ0gdQyqX5G2RkF0Kq7wduG3pPOgk9w4C6z6c3m2qkq8fC/6y'), 'admin');
 -- Update the password hash to a generated one using PHP when running if needed.
+
+CREATE TABLE IF NOT EXISTS tailor_jobs (
+  id            INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  tailor_id     INT UNSIGNED NOT NULL,
+  product_id    INT UNSIGNED NULL,                -- seçili üründen
+  product_name  VARCHAR(150) NOT NULL,            -- serbest isim (formdaki “Ürün adı”)
+  note          TEXT NULL,
+  price         DECIMAL(10,2) NULL,
+  sent_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,   -- terziye verildi
+  due_at        DATETIME NULL,                                  -- istenen teslim tarihi
+  returned_at   DATETIME NULL,                                  -- terziden geri geldi
+  created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME NULL,
+  deleted_at    DATETIME NULL,
+
+  CONSTRAINT fk_tailor_jobs_tailor
+    FOREIGN KEY (tailor_id) REFERENCES tailors(id)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+
+  KEY idx_jobs_scope (returned_at, sent_at),
+  KEY idx_jobs_deleted (deleted_at),
+  KEY idx_jobs_name (product_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ===== definitions: income categories =========================
+CREATE TABLE IF NOT EXISTS income_categories (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  title      VARCHAR(120) NOT NULL,
+  sort       INT NOT NULL DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  deleted_at DATETIME NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- örnek başlangıç verisi
+INSERT INTO income_categories (title, sort)
+SELECT * FROM (SELECT 'FİRMA SAHİBİ' AS title, 0 AS sort) AS seed
+WHERE NOT EXISTS (SELECT 1 FROM income_categories LIMIT 1);

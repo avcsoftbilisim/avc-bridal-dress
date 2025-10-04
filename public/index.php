@@ -5,7 +5,7 @@ session_start();
 
 $isDebug = (getenv('APP_DEBUG') === 'true');   // .env: APP_DEBUG=true/false
 
-var_dump(class_exists('App\\Controllers\\TailorController')); exit;
+//var_dump(class_exists('App\\Controllers\\TailorController')); exit;
 
 
 
@@ -18,6 +18,7 @@ use App\Controllers\CustomersController;
 use App\Controllers\ProductsController;
 use App\Controllers\RentalsController;
 use App\Controllers\TailorController;
+use App\Controllers\DefinitionsController;
 
 error_reporting(E_ALL);
 ini_set('display_errors','1');
@@ -104,3 +105,10 @@ $router->get('/customer', function(){ header('Location:/customers', true, 301); 
 $router->get('/ping', function(){ echo 'pong'; });
 
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+
+/* Tanımlamalar */
+$router->get('/definitions',                    [DefinitionsController::class, 'index']);
+$router->get('/definitions/income',             [DefinitionsController::class, 'incomeList']);
+$router->post('/definitions/income',            [DefinitionsController::class, 'incomeCreate']);
+$router->post('#^/definitions/income/(\d+)$#',  [DefinitionsController::class, 'incomeUpdate']);
+$router->post('#^/definitions/income/(\d+)/delete$#',   [DefinitionsController::class, 'incomeDelete']);

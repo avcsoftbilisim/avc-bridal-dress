@@ -109,6 +109,12 @@
             </li>
         </ul>
     </li>
+
+  <li class="nav-item">
+    <a class="nav-link<?= ($active ?? '')==='defs' ? ' active' : '' ?>" href="/definitions">
+      <i class="nav-icon cil-people"></i> Tanımlamalar
+    </a>
+  </li>
   <li class="nav-item"><a class="nav-link <?= $active==='fittings'?'active':'' ?>" href="/fittings"><i class="nav-icon cil-calendar"></i> Provalar</a></li>
   <li class="nav-item"><a class="nav-link <?= $active==='rentals'?'active':'' ?>" href="/rentals"><i class="nav-icon cil-library"></i> Kiralamalar</a></li>
   <li class="nav-item"><a class="nav-link <?= $active==='reports'?'active':'' ?>" href="/reports"><i class="nav-icon cil-chart-line"></i> Raporlar</a></li>
