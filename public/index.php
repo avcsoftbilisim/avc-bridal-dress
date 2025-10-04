@@ -5,6 +5,8 @@ session_start();
 
 $isDebug = (getenv('APP_DEBUG') === 'true');   // .env: APP_DEBUG=true/false
 
+//var_dump(class_exists('App\\Controllers\\TailorController')); exit;
+
 
 
 require __DIR__ . '/../app/Core/Autoloader.php';
@@ -15,6 +17,8 @@ use App\Controllers\AuthController;
 use App\Controllers\CustomersController;
 use App\Controllers\ProductsController;
 use App\Controllers\RentalsController;
+use App\Controllers\TailorController;
+use App\Controllers\DefinitionsController;
 
 error_reporting(E_ALL);
 ini_set('display_errors','1');
@@ -55,13 +59,35 @@ $router->get('/products/deleted',                [ProductsController::class, 'de
 $router->post('#^/products/deleted/(\d+)/restore$#', [ProductsController::class, 'restore']);
 $router->post('#^/products/deleted/(\d+)/purge$#',   [ProductsController::class, 'purge']);
 
-// Kiralamalar
-$router->get('/rentals',            [RentalsController::class, 'current']); // Kiradaki Ürünler
-$router->get('/rentals/past',       [RentalsController::class, 'past']);    // Geçmiş Kiralar
-$router->get('/rentals/future',     [RentalsController::class, 'future']);  // Gelecek Kiralar
+// Kiralamalar (doğru path)
+$router->get('/rentals',         [RentalsController::class, 'current']);
+$router->get('/rentals/current', [RentalsController::class, 'current']);
+$router->get('/rentals/past',    [RentalsController::class, 'past']);
+$router->get('/rentals/future',  [RentalsController::class, 'future']);
+$router->post('/rentals/{id}/return', [RentalsController::class, 'markReturned']);
 
 // Teslim alma (return)
 $router->post('#^/rentals/(\d+)/return$#', [RentalsController::class, 'markReturned']);
+
+// Kiralamalar Köprü: /products/rentals → rentals
+$router->get('/products/rentals',        [RentalsController::class, 'current']);
+$router->get('/products/rentals/past',   [RentalsController::class, 'past']);
+$router->get('/products/rentals/future', [RentalsController::class, 'future']);
+
+// Terzideki (doğru path)
+$router->get('/tailor',         [TailorController::class, 'current']);
+$router->get('/tailor/current', [TailorController::class, 'current']);
+$router->get('/tailor/past',    [TailorController::class, 'past']);
+$router->get('/tailor/future',  [TailorController::class, 'future']);
+
+// Terzideki ürünler
+$router->get('/products/tailor',         [TailorController::class, 'current']); // Terzidekiler
+$router->get('/products/tailor/past',    [TailorController::class, 'past']);    // Geçmiş
+$router->get('/products/tailor/future',  [TailorController::class, 'future']);  // Gelecek
+
+// (İleride) Terziye gönderme ve yeni terzi ekleme POST uçları
+$router->post('/tailor/jobs',            [TailorController::class, 'storeJob']);    // “Terziye ürün gönder”
+$router->post('/tailor/people',          [TailorController::class, 'storeTailor']); // “Yeni terzi oluştur”
 
 // Cari Yönetimi
 $router->get('/customers',          [\App\Controllers\CustomersController::class, 'index']);
@@ -79,3 +105,10 @@ $router->get('/customer', function(){ header('Location:/customers', true, 301); 
 $router->get('/ping', function(){ echo 'pong'; });
 
 $router->dispatch($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
+
+/* Tanımlamalar */
+$router->get('/definitions',                    [DefinitionsController::class, 'index']);
+$router->get('/definitions/income',             [DefinitionsController::class, 'incomeList']);
+$router->post('/definitions/income',            [DefinitionsController::class, 'incomeCreate']);
+$router->post('#^/definitions/income/(\d+)$#',  [DefinitionsController::class, 'incomeUpdate']);
+$router->post('#^/definitions/income/(\d+)/delete$#',   [DefinitionsController::class, 'incomeDelete']);

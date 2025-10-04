@@ -28,10 +28,12 @@ class Router {
     }
 
     public function dispatch(string $method, string $uri) {
-        // URL path normalizasyonu
-        $path = parse_url($uri, PHP_URL_PATH) ?? '/';
-        $path = rtrim($path, '/');
-        if ($path === '') $path = '/';
+    $path = parse_url($uri, PHP_URL_PATH);
+
+        // /rentals/ → /rentals
+        if ($path !== '/' && substr($path, -1) === '/') {
+            $path = rtrim($path, '/');
+        }
 
         foreach ($this->routes as $r) {
             if ($r['method'] !== $method) continue;

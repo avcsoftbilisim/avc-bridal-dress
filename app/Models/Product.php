@@ -100,4 +100,9 @@ class Product extends Model
         $st = DB::conn()->prepare("DELETE FROM {$this->table} WHERE id = ?");
         return $st->execute([$id]);
     }
+
+    public function optionsForSelect(): array {
+        $st = DB::conn()->query("SELECT id, name FROM products WHERE deleted_at IS NULL ORDER BY name");
+        return $st->fetchAll(PDO::FETCH_ASSOC);
+    }
 }
